@@ -1,25 +1,31 @@
 #include <SoftwareSerial.h>
 
+#define Button 9
+
 SoftwareSerial SIM900A(7,8);
 
+int State, ButtonState = 0;
 String CellNumTemp, CellNum;
 
 void setup() {
+  pinMode(Button,INPUT);
   SIM900A.begin(9600); // GSM Module Baud rate - communication speed
   delay(100);
   Serial.begin(9600);
-  Serial.println ("Text Messege Module Ready & Verified");
+  Serial.println ("Text Message Module Ready & Verified");
 }
 
 void loop() {
 
-  if (Serial.available()>0) {
-    switch(Serial.read()) {
-      case 'r':
-        SIM900A.println("AT+CNMI=2,2,0,0,0"); // Receiving Mode Enabled
-        delay(1000);
-        break;
-    }
+  Serial.read();
+  ButtonState = digitalRead(Button);
+  delay(1000);
+  Serial.print("ButtonState: ");
+  Serial.println(ButtonState);
+  if (ButtonState == 1) {
+    SIM900A.println("AT+CNMI=2,2,0,0,0"); // Receiving Mode Enabled
+    delay(1000);
+    ButtonState = 0;
   }
   
   if (SIM900A.available() > 0) {
@@ -38,6 +44,7 @@ void loop() {
     }
     tempo = "";
   }
+  delay(2000);
 }
 
 void SendMessage(String CellNum) {
