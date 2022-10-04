@@ -13,12 +13,12 @@ void setup() {
   delay(100);
   Serial.begin(9600);
   Serial.println ("Text Message Module Ready & Verified");
+  ButtonState = 1;
 }
 
 void loop() {
 
   Serial.read();
-  ButtonState = digitalRead(Button);
   delay(1000);
   //Serial.print("ButtonState: ");
   //Serial.println(ButtonState);
@@ -42,6 +42,7 @@ void loop() {
       CellNumTemp = "";
       CellNum = "";
     } else if (tempo.indexOf("RING") != -1) {
+      //SIM900A.println("AT+CLIP=1");
       CallResponse();
     }
     tempo = "";
@@ -59,17 +60,16 @@ void SendMessage(String CellNum) {
   SIM900A.println(send_command); // Send SMS command with Receiver's Mobile Number
   delay(1000);
   Serial.println("Set SMS Content");
-  SIM900A.println("This is an auto-reply. Our staff is busy right now. Thank you.");// Messsage content
-  delay(100);
+  SIM900A.println("This is an auto-reply. Our staff is busy right now. For application, joblisting and updates, pls. visit our website Thank you.");// Messsage content
+  delay(1000);
   Serial.println("Done");
   SIM900A.println((char)26);//   delay(1000);
   Serial.println("Message sent succesfully");
 }
 
 void CallResponse() {
-  SIM900A.println("ATA\r\n"); // Accepts incoming call
+  SIM900A.println("ATA"); // Accepts incoming call
   //This is where the code for the voice kit module will be placed...
   delay(10000); // Call for 10 seconds
   SIM900A.println("ATH"); // Disconnects Call
-
 }
