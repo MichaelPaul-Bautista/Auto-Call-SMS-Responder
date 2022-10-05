@@ -5,7 +5,7 @@
 SoftwareSerial SIM900A(7,8);
 
 int State, ButtonState = 0;
-String CellNumTemp, CellNum;
+String CellNumTemp, CellNum, CallNumTemp, CallNum;
 
 void setup() {
   pinMode(Button,INPUT);
@@ -44,14 +44,23 @@ void loop() {
     } else if (tempo.indexOf("RING") != -1) {
       //SIM900A.println("AT+CLIP=1");
       CallResponse();
+      //if (tempo.indexOf("+CLIP: \"09") != -1) {
+        //CallNumTemp = tempo.substring(tempo.indexOf("09"));
+        //CallNum = CallNumTemp.substring(0,11);
+        //Serial.println(CallNum);
+        //SendMessage(CallNum);
+        //delay(1000);
+        //CallNumTemp = "";
+        //CallNum = "";
+      //}
     }
     tempo = "";
   }
   delay(2000);
 }
 
-void SendMessage(String CellNum) {
-  String send_command = "AT+CMGS=\"" + CellNum + "\"\r";
+void SendMessage(String Num) {
+  String send_command = "AT+CMGS=\"" + Num + "\"\r";
   Serial.println(send_command);
   Serial.println("Sending Message please wait....");
   SIM900A.println("AT+CMGF=1");    //Text Mode initialisation 
@@ -60,7 +69,7 @@ void SendMessage(String CellNum) {
   SIM900A.println(send_command); // Send SMS command with Receiver's Mobile Number
   delay(1000);
   Serial.println("Set SMS Content");
-  SIM900A.println("This is an auto-reply. Our staff is busy right now. For application, joblisting and updates, pls. visit our website Thank you.");// Messsage content
+  SIM900A.println("This is an auto-reply. Our staff is busy right now. For application, joblisting and updates, pls. call this number for instructions. Thank you.");// Messsage content
   delay(1000);
   Serial.println("Done");
   SIM900A.println((char)26);//   delay(1000);
