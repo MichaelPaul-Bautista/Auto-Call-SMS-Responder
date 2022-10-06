@@ -1,31 +1,31 @@
 #include <SoftwareSerial.h>
 
-#define Button 9
+#define voice 4
 
 SoftwareSerial SIM900A(7,8);
 
-int State, ButtonState = 0;
-String CellNumTemp, CellNum, CallNumTemp, CallNum;
+int State = 0;
+String CellNumTemp, CellNum;
 
 void setup() {
-  pinMode(Button,INPUT);
+  pinMode(voice, OUTPUT);
   SIM900A.begin(9600); // GSM Module Baud rate - communication speed
   delay(100);
+  digitalWrite(voice, LOW);
   Serial.begin(9600);
   Serial.println ("Text Message Module Ready & Verified");
-  ButtonState = 1;
+  State = 1;
 }
 
 void loop() {
 
   Serial.read();
   delay(1000);
-  //Serial.print("ButtonState: ");
-  //Serial.println(ButtonState);
-  if (ButtonState == 1) {
+  
+  if (State == 1) {
     SIM900A.println("AT+CNMI=2,2,0,0,0"); // Receiving Mode Enabled
     delay(1000);
-    ButtonState = 0;
+    State = 0;
   }
   
   if (SIM900A.available() > 0) {
@@ -42,17 +42,16 @@ void loop() {
       CellNumTemp = "";
       CellNum = "";
     } else if (tempo.indexOf("RING") != -1) {
-      //SIM900A.println("AT+CLIP=1");
       CallResponse();
-      if (tempo.indexOf("+CLIP: \"09") != -1) {
-        CallNumTemp = tempo.substring(tempo.indexOf("09"));
-        CallNum = CallNumTemp.substring(0,11);
-        Serial.println(CallNum);
-        SendMessage(CallNum);
-        delay(1000);
-        CallNumTemp = "";
-        CallNum = "";
-      }
+      //if (tempo.indexOf("+CLIP: \"09") != -1) {
+        //CallNumTemp = tempo.substring(tempo.indexOf("09"));
+        //CallNum = CallNumTemp.substring(0,11);
+        //Serial.println(CallNum);
+        //SendMessage(CallNum);
+        //delay(1000);
+        //CallNumTemp = "";
+        //CallNum = "";
+      //}
     }
     tempo = "";
   }
@@ -69,7 +68,7 @@ void SendMessage(String Num) {
   SIM900A.println(send_command); // Send SMS command with Receiver's Mobile Number
   delay(1000);
   Serial.println("Set SMS Content");
-  SIM900A.println("This is an auto-reply. Our staff is busy right now. Please email at apply@phrwe.com Thank you.");// Messsage content
+  SIM900A.println("Hi, this is an auto-reply. Our staff is busy right now. For joblisting and how to apply, pls. visit cogentadsDOTinfo Please replace DOT with the point sign "."");// Messsage content
   delay(1000);
   Serial.println("Done");
   SIM900A.println((char)26);//   delay(1000);
@@ -78,7 +77,9 @@ void SendMessage(String Num) {
 
 void CallResponse() {
   SIM900A.println("ATA"); // Accepts incoming call
-  //This is where the code for the voice kit module will be placed...
-  delay(10000); // Call for 10 seconds
+  digitalWrite(voice, HIGH); // Plays Audio from Voice module
+  delay(5000); // Call for 10 seconds
   SIM900A.println("ATH"); // Disconnects Call
+  delay(1000);
+  digitalWrite(voice, LOW); // Stops Audio from Voice module
 }
