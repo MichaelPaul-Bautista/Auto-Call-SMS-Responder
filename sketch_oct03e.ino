@@ -5,7 +5,7 @@
 SoftwareSerial SIM900A(7,8);
 
 int State = 0;
-String CellNumTemp, CellNum;
+String CellNumTemp, CellNum, CallNumTemp, CallNum;
 
 void setup() {
   pinMode(voice, OUTPUT);
@@ -43,15 +43,15 @@ void loop() {
       CellNum = "";
     } else if (tempo.indexOf("RING") != -1) {
       CallResponse();
-      //if (tempo.indexOf("+CLIP: \"09") != -1) {
-        //CallNumTemp = tempo.substring(tempo.indexOf("09"));
-        //CallNum = CallNumTemp.substring(0,11);
-        //Serial.println(CallNum);
-        //SendMessage(CallNum);
-        //delay(1000);
-        //CallNumTemp = "";
-        //CallNum = "";
-      //}
+      if (tempo.indexOf("+CLIP: \"09") != -1) {
+        CallNumTemp = tempo.substring(tempo.indexOf("09"));
+        CallNum = CallNumTemp.substring(0,11);
+        Serial.println(CallNum);
+        SendMessage(CallNum);
+        delay(1000);
+        CallNumTemp = "";
+        CallNum = "";
+      }
     }
     tempo = "";
   }
@@ -68,7 +68,7 @@ void SendMessage(String Num) {
   SIM900A.println(send_command); // Send SMS command with Receiver's Mobile Number
   delay(1000);
   Serial.println("Set SMS Content");
-  SIM900A.println("Hi, this is an auto-reply. Our staff is busy right now. For joblisting and how to apply, pls. visit cogentadsDOTinfo Please replace DOT with the point sign "."");// Messsage content
+  SIM900A.println("Hi, this is an auto-reply. Our staff is busy right now. For joblisting and how to apply, pls. visit cogentadsDOTinfo Please replace DOT with the point sign \".\""); // Messsage content
   delay(1000);
   Serial.println("Done");
   SIM900A.println((char)26);//   delay(1000);
@@ -77,9 +77,10 @@ void SendMessage(String Num) {
 
 void CallResponse() {
   SIM900A.println("ATA"); // Accepts incoming call
+  delay(50);
   digitalWrite(voice, HIGH); // Plays Audio from Voice module
-  delay(5000); // Call for 10 seconds
+  delay(11000); // Call for 10 seconds
   SIM900A.println("ATH"); // Disconnects Call
-  delay(1000);
+  delay(50);
   digitalWrite(voice, LOW); // Stops Audio from Voice module
 }
