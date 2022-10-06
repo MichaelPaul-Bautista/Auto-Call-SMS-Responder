@@ -8,10 +8,10 @@ int State = 0;
 String CellNumTemp, CellNum, CallNumTemp, CallNum;
 
 void setup() {
-  pinMode(voice, OUTPUT);
+  pinMode(voice, OUTPUT); // Initializing Voice Module as OUTPUT
   SIM900A.begin(9600); // GSM Module Baud rate - communication speed
   delay(100);
-  digitalWrite(voice, LOW);
+  digitalWrite(voice, LOW); // Default state of Voice Module is LOW
   Serial.begin(9600);
   Serial.println ("Text Message Module Ready & Verified");
   State = 1;
@@ -30,36 +30,36 @@ void loop() {
   
   if (SIM900A.available() > 0) {
     Serial.write(SIM900A.read());
-    String tempo = SIM900A.readString();
+    String tempo = SIM900A.readString(); // Stores the Serial Output of SIM900A to a string variable
     tempo.trim();
     Serial.println(tempo);
     if (tempo.indexOf("+CMT: \"+639") != -1) {
       CellNumTemp = tempo.substring(tempo.indexOf("+639"));
-      CellNum = CellNumTemp.substring(0,13);
+      CellNum = CellNumTemp.substring(0,13); // Stores the SMS sender's number to string variable
       Serial.println(CellNum);
       SendMessage(CellNum);
       delay(1000);
-      CellNumTemp = "";
-      CellNum = "";
+      CellNumTemp = ""; // Resets value of CellNumTemp
+      CellNum = ""; // Resets value of CellNum
     } else if (tempo.indexOf("RING") != -1) {
       CallResponse();
       if (tempo.indexOf("+CLIP: \"09") != -1) {
         CallNumTemp = tempo.substring(tempo.indexOf("09"));
-        CallNum = CallNumTemp.substring(0,11);
+        CallNum = CallNumTemp.substring(0,11); // Stores the caller's number to string variable
         Serial.println(CallNum);
         SendMessage(CallNum);
         delay(1000);
-        CallNumTemp = "";
-        CallNum = "";
+        CallNumTemp = ""; // Resets value of CallNumTemp
+        CallNum = ""; // Resets value of CallNum
       }
     }
-    tempo = "";
+    tempo = ""; // Resets value of tempo
   }
   delay(2000);
 }
 
 void SendMessage(String Num) {
-  String send_command = "AT+CMGS=\"" + Num + "\"\r";
+  String send_command = "AT+CMGS=\"" + Num + "\"\r"; // SMS command
   Serial.println(send_command);
   Serial.println("Sending Message please wait....");
   SIM900A.println("AT+CMGF=1");    //Text Mode initialisation 
