@@ -77,7 +77,7 @@ void SendMessage(String Num) {
 
 void CallResponse() {
   SIM900A.println("ATA"); // Accepts incoming call
-  delay(50);
+  delay(10);
   digitalWrite(voice, HIGH); // Plays Audio from Voice module
   delay(11000); // Call for 10 seconds
   SIM900A.println("ATH"); // Disconnects Call
