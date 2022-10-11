@@ -32,6 +32,7 @@ void loop() {
   if (State == 1) {
     //SIM900A.println("AT+CNMI=2,2,0,0,0"); Set the GSM into receiving SMS mode in TE flash memory
     SIM900A.println("AT+CNMI?"); 
+    CellNum, CallNum = ""; // Re-initialize CellNum & CallNum
     State = 0; // Set the State to 0 after initialization
   }
   
