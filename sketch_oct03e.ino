@@ -1,9 +1,9 @@
 #include <SoftwareSerial.h>
 
-#define voice 4
-#define button 9
+#define voice 4 // Voice Module on Pin 4
+#define button 9 // Button for GSM initialization on Pin 9
 
-SoftwareSerial SIM900A(7,8);
+SoftwareSerial SIM900A(7,8); // Rx and Tx in ARDUINO Pin 7 and 8 respectively
 
 int State = 0;
 String CellNumTemp, CellNum, CallNumTemp, CallNum;
